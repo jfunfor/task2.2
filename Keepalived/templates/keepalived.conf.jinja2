@@ -1,0 +1,12 @@
+! Configuration File for keepalived
+
+vrrp_instance VI_1 {
+    state {{ mode }}
+    interface enp0s3
+    virtual_router_id 1
+    priority {{ priority }}
+
+    virtual_ipaddress {
+        192.168.200.110/24 dev enp0s3 label enp0s3:1
+    }
+}

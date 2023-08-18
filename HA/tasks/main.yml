@@ -1,0 +1,98 @@
+---
+# tasks file for HA
+
+- name: Install the latest version of haproxy
+  become: yes
+  vars:
+    ansible_python_interpreter: "/bin/python"
+  ansible.builtin.yum:
+    name:
+      - gcc
+      - pcre-devel
+      - tar
+      - make
+      - wget
+    state: latest
+
+- name: make dir ~/haproxy
+  become: yes
+  ansible.builtin.file:
+    path: ~/haproxy
+    state: directory
+    mode: ug+rw
+
+- name: Download file
+  become: yes
+  ansible.builtin.get_url:
+    url: http://www.haproxy.org/download/2.0/src/haproxy-2.0.7.tar.gz
+    dest: ~/haproxy.tar.gz
+
+- name: Extract ~/haproxy.tar.gz in ~/haproxy/
+  become: yes
+  ansible.builtin.unarchive:
+    src: ~/haproxy.tar.gz
+    dest: ~/haproxy/
+
+- name: Build linux-glibc target
+  become: yes
+  ansible.builtin.command: make TARGET=linux-glibc
+  args:
+    chdir: ~/haproxy/haproxy-2.0.7
+
+- name: Run 'install' target as root
+  make:
+    chdir: ~/haproxy/haproxy-2.0.7
+    target: install
+  become: yes
+
+- name: make dir /etc/haproxy
+  become: yes
+  ansible.builtin.file:
+    path: /etc/haproxy
+    state: directory
+    mode: ug+rw
+
+- name: make dir /var/lib/haproxy
+  become: yes
+  ansible.builtin.file:
+    path: /var/lib/haproxy
+    state: directory
+    mode: ug+rw
+
+- name: make dir /var/lib/haproxy/stats
+  become: yes
+  ansible.builtin.file:
+    path: /var/lib/haproxy/stats
+    state: file
+    mode: ug+rw
+
+
+- name: Create a symbolic link
+  ansible.builtin.file:
+    src: /usr/local/sbin/haproxy
+    dest: /usr/sbin/haproxy
+    owner: root
+    state: link
+
+- name: ansible copy file locally.
+  ansible.builtin.copy:
+   src: ~/haproxy/haproxy-2.0.7/examples/haproxy.init
+   dest: /etc/init.d/haproxy
+   mode: 755
+
+- name: Make sure a service unit is running
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Add the user haproxy
+  ansible.builtin.user:
+    name: haproxy
+    shell: /bin/bash
+    groups: wheel
+    append: yes
+
+- name: copy haproxy.cfg to hosts
+  become: yes
+  ansible.builtin.template:
+    src: haproxy.cfg.jinja2
+    dest: /etc/haproxy/haproxy.cfg

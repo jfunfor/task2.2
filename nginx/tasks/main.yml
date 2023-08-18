@@ -1,0 +1,64 @@
+---
+# tasks file for nginx
+
+- name: make dir in user directory
+  become: yes
+  ansible.builtin.file:
+    path: /home/centos/tasks/task2.2/docker
+    state: directory
+    mode: ug+rw
+    owner: centos
+
+- name: copy Dockerfile to remote ansible host
+  become: yes
+  ansible.builtin.template:
+    src: Dockerfile.jinja2
+    dest: /home/centos/tasks/task2.2/docker/Dockerfile
+
+- name: copy nginx.conf to remote ansible host
+  become: yes
+  ansible.builtin.template:
+    src: nginx.conf.jinja2
+    dest: /home/centos/tasks/task2.2/docker/nginx.conf
+
+- name: copy html to remote ansible host web1
+  become: yes
+  when: ansible_host == '10.0.2.4'
+  ansible.builtin.template:
+    src: server_first.html.jinja2
+    dest: /home/centos/tasks/task2.2/docker/server_first.html
+
+- name: copy html to remote ansible web2
+  become: yes
+  when: ansible_host == '10.0.2.5'
+  ansible.builtin.template:
+    src: server_second.html.jinja2
+    dest: /home/centos/tasks/task2.2/docker/server_second.html
+
+- name: Build image with build args for web1
+  when: ansible_host == '10.0.2.4'
+  community.docker.docker_image:
+    name: nginx
+    build:
+      path: /home/centos/tasks/task2.2/docker
+      args:
+        html_file: server_first.html
+    source: build
+
+- name: Build image with build args for web2
+  when: ansible_host == '10.0.2.5'
+  community.docker.docker_image:
+    name: nginx
+    build:
+      path: /home/centos/tasks/task2.2/docker
+      args:
+        html_file: server_second.html
+    source: build
+
+- name: run container with build args
+  community.docker.docker_container:
+    name: nginx-container
+    image: nginx
+    ports:
+      - "8080:8080"
+

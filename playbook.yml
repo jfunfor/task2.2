@@ -1,0 +1,10 @@
+- name: "Configure web-servers"
+  hosts: webservers
+  roles:
+    - {role: 'nginx', tags: 'icg-configuration'}
+
+- name: "Configure web-servers"
+  hosts: loadbalancers
+  roles:
+    - {role: 'HA', tags: 'network-configuration'}
+    - {role: 'Keepalived', tags: 'configuration'}

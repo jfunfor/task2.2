@@ -1,0 +1,38 @@
+---
+# tasks file for Keepalived
+
+
+- name: Install the latest version of keepalived
+  become: yes
+  vars:
+    ansible_python_interpreter: "/bin/python"
+  ansible.builtin.yum:
+    name: keepalived
+    state: latest
+
+- name: copy keepalived.conf to hosts
+  become: yes
+  when: ansible_host == '10.0.2.4'
+  vars:
+    mode: MASTER
+    priority: 11
+  ansible.builtin.template:
+    src: keepalived.conf.jinja2
+    dest: /etc/keepalived/keepalived.conf
+
+- name: copy keepalived.conf to hosts
+  become: yes
+  when: ansible_host == '10.0.2.5'
+  vars:
+    mode: SLAVE
+    priority: 10
+  ansible.builtin.template:
+    src: keepalived.conf.jinja2
+    dest: /etc/keepalived/keepalived.conf
+
+- name: Make sure a service unit is running
+  ansible.builtin.systemd:
+    state: restarted
+    name: keepalived
+    enabled: yes
+

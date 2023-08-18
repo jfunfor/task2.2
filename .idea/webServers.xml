@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="21f971ca-1ed4-43d0-a6dd-87cab1014c6a" name="192.168.200.108">
+        <fileTransfer rootFolder="/home/centos/tasks/" accessType="SFTP" host="192.168.200.108" port="22" sshConfigId="734ad221-92da-46e6-93c8-738c03ddb7b6" sshConfig="root@192.168.200.108:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="b2f27567-6192-401c-b625-8add63b4555b" name="192.168.200.109">
+        <fileTransfer rootFolder="/home/centos/tasks/" accessType="SFTP" host="192.168.200.109" port="22" sshConfigId="3a953e4a-c2e0-4b4e-864c-5165fa68fba4" sshConfig="root@192.168.200.109:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="60d31df6-7bd9-46eb-9c53-6a113f866b7b" name="192.168.1.46">
+        <fileTransfer rootFolder="/home/centos/tasks" accessType="SFTP" host="192.168.1.46" port="22" sshConfigId="2a7d657a-d776-42c8-a912-86a1ca6b77e7" sshConfig="root@192.168.1.46:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
